@@ -25,32 +25,37 @@ RUN apt-get update && apt-get install -y \
 
 COPY support /root/support
 
-ENV CROSS_TRIPLE=aarch64-none-linux-gnu
-ENV TOOLCHAIN_DIR=/opt/ext-toolchain
+ENV TOOLCHAIN_DIR=/opt/aarch64-nextui-linux-gnu
+
+# Download the appropriate cross toolchain based on host arch
+RUN mkdir -p ${TOOLCHAIN_DIR} && \
+    ARCH=$(uname -m) && \
+    TOOLCHAIN_REPO=https://github.com/LoveRetro/gcc-arm-10.3-aarch64-tg5050 && \
+    TOOLCHAIN_BUILD=v10.3.0-20251210-140856-7a6d07f3 && \
+    if [ "$ARCH" = "x86_64" ]; then \
+        TOOLCHAIN_ARCHIVE=gcc-10.3.0-aarch64-nextui-linux-gnu-x86_64-host.tar.xz; \
+    elif [ "$ARCH" = "aarch64" ]; then \
+        TOOLCHAIN_ARCHIVE=gcc-10.3.0-aarch64-nextui-linux-gnu-arm64-host.tar.xz; \
+    else \
+        echo "Unsupported architecture: $ARCH" && exit 1; \
+    fi && \
+    TOOLCHAIN_URL=${TOOLCHAIN_REPO}/releases/download/${TOOLCHAIN_BUILD}/${TOOLCHAIN_ARCHIVE}; \
+    wget -q $TOOLCHAIN_URL -O /tmp/toolchain.tar.xz && \
+    tar -xf /tmp/toolchain.tar.xz -C ${TOOLCHAIN_DIR} --strip-components=2 && \
+    rm /tmp/toolchain.tar.xz
+
+ENV CROSS_TRIPLE=aarch64-nextui-linux-gnu
 ENV CROSS_ROOT=${TOOLCHAIN_DIR}
 ENV SYSROOT=${CROSS_ROOT}/${CROSS_TRIPLE}/libc
 
-# Download and extract the SDK sysroot and toolchain
-ENV SDK_TAR=sdk_tg5050_linux_v1.0.0.tgz
-ENV SDK_URL=https://github.com/LoveRetro/tg5050-toolchain/releases/download/20251208/${SDK_TAR}
+# Download and extract the SDK sysroot
+#ENV SDK_TAR=SDK_usr_tg5040_a133p.tgz
+#ENV SDK_URL=https://github.com/trimui/toolchain_sdk_smartpro/releases/download/20231018/${SDK_TAR}
 
-RUN mkdir -p /sdk
-RUN wget -q ${SDK_URL} -O /tmp/${SDK_TAR} && \
-tar -xzf /tmp/${SDK_TAR} -C /sdk --strip-components=2
-RUN rm /tmp/${SDK_TAR}
-# manually copy the sdk into place to not mess up our environment
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu /aarch64-buildroot-linux-gnu
-RUN cp -r /sdk/bin/. /usr/bin
-RUN cp -r /sdk/doc/. /usr/share/doc
-RUN cp -r /sdk/etc/. /etc
-RUN cp -r /sdk/include/. /usr/include
-RUN cp -r /sdk/lib/. /usr/lib
-RUN cp -r /sdk/libexec/. /usr/libexec
-RUN cp -r /sdk/man/. /usr/share/man
-RUN cp -r /sdk/opt/. /opt
-RUN cp -r /sdk/sbin/. /usr/sbin
-RUN cp -r /sdk/share/. /usr/share
-RUN rm -rf /sdk
+#RUN mkdir -p ${SYSROOT} && \
+#wget -q ${SDK_URL} -O /tmp/${SDK_TAR} && \
+#tar -xzf /tmp/${SDK_TAR} -C ${SYSROOT} && \
+#rm /tmp/${SDK_TAR}
 
 ENV AS=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-as \
     AR=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-ar \
@@ -84,9 +89,9 @@ ENV PKG_CONFIG_PATH=${SYSROOT}/usr/lib/pkgconfig:${SYSROOT}/usr/share/pkgconfig
 
 # stuff and extra libs
 COPY support .
-#RUN ./build-libzip.sh
+RUN ./build-libzip.sh
 #RUN ./build-bluez.sh
-#RUN ./build-libsamplerate.sh
+RUN ./build-libsamplerate.sh
 
 
 ENV UNION_PLATFORM=tg5050
