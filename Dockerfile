@@ -1,14 +1,9 @@
-FROM debian:bullseye-slim
-
-ENV DEBIAN_FRONTEND=noninteractive
-
-ENV TZ=America/New_York
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+FROM ubuntu:24.04
 
 # Install base build tools and dependencies
 RUN apt-get update && apt-get install -y \
     make \
-    build-essential \
+    #    build-essential \
     cmake \
     ninja-build \
     autotools-dev \
@@ -26,67 +21,88 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     gettext \
     vim \
-#	libsdl2-dev \
-#	libsdl2-image-dev \
-#	libsdl2-ttf-dev \
-    libsamplerate0-dev \
-    libzip-dev \
-    libsqlite3-dev \
-# 5.2 or newer for lzma/xz in libzip
-    liblzma-dev \ 
-# zstd support for libzip
-    libzstd-dev \
-# bz2 support for libzip
-    libbz2-dev \
-# zlib for libzip
-    zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /root/workspace
-WORKDIR /root
+COPY support /root/support
 
-# stuff
+ENV TOOLCHAIN_DIR=/opt/aarch64-nextui-linux-gnu
+
+# Download the appropriate cross toolchain based on host arch
+RUN mkdir -p ${TOOLCHAIN_DIR} && \
+    ARCH=$(uname -m) && \
+    TOOLCHAIN_REPO=https://github.com/LoveRetro/gcc-arm-10.3-aarch64-tg5050 && \
+    TOOLCHAIN_BUILD=v10.3.0-20251210-140856-7a6d07f3 && \
+    if [ "$ARCH" = "x86_64" ]; then \
+        TOOLCHAIN_ARCHIVE=gcc-10.3.0-aarch64-nextui-linux-gnu-x86_64-host.tar.xz; \
+    elif [ "$ARCH" = "aarch64" ]; then \
+        TOOLCHAIN_ARCHIVE=gcc-10.3.0-aarch64-nextui-linux-gnu-arm64-host.tar.xz; \
+    else \
+        echo "Unsupported architecture: $ARCH" && exit 1; \
+    fi && \
+    TOOLCHAIN_URL=${TOOLCHAIN_REPO}/releases/download/${TOOLCHAIN_BUILD}/${TOOLCHAIN_ARCHIVE}; \
+    wget -q $TOOLCHAIN_URL -O /tmp/toolchain.tar.xz && \
+    tar -xf /tmp/toolchain.tar.xz -C ${TOOLCHAIN_DIR} --strip-components=2 && \
+    rm /tmp/toolchain.tar.xz
+
+ENV CROSS_TRIPLE=aarch64-nextui-linux-gnu
+ENV CROSS_ROOT=${TOOLCHAIN_DIR}
+ENV SYSROOT=${CROSS_ROOT}/${CROSS_TRIPLE}/libc
+
+# Download and extract the SDK sysroot
+#ENV SDK_TAR=SDK_usr_tg5040_a133p.tgz
+#ENV SDK_URL=https://github.com/trimui/toolchain_sdk_smartpro/releases/download/20231018/${SDK_TAR}
+
+#RUN mkdir -p ${SYSROOT} && \
+#wget -q ${SDK_URL} -O /tmp/${SDK_TAR} && \
+#tar -xzf /tmp/${SDK_TAR} -C ${SYSROOT} && \
+#rm /tmp/${SDK_TAR}
+
+ENV AS=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-as \
+    AR=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-ar \
+    CC=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-gcc \
+    CPP=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-cpp \
+    CXX=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-g++ \
+    LD=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-ld
+
+# Linux kernel cross compilation variables
+ENV PATH=${CROSS_ROOT}/bin:${PATH}
+ENV CROSS_COMPILE=${CROSS_TRIPLE}-
+ENV PREFIX=${SYSROOT}/usr
+ENV ARCH=arm64
+
+# qemu, anyone?
+#ENV QEMU_LD_PREFIX="${CROSS_ROOT}/${CROSS_TRIPLE}/sysroot"
+#ENV QEMU_SET_ENV="LD_LIBRARY_PATH=${CROSS_ROOT}/lib:${QEMU_LD_PREFIX}"
+
+# CMake toolchain
+COPY toolchain-aarch64.cmake ${CROSS_ROOT}/Toolchain.cmake
+ENV CMAKE_TOOLCHAIN_FILE=${CROSS_ROOT}/Toolchain.cmake
+
+#ENV PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig
+ENV PKG_CONFIG_SYSROOT_DIR=${SYSROOT}
+ENV PKG_CONFIG_PATH=${SYSROOT}/usr/lib/pkgconfig:${SYSROOT}/usr/share/pkgconfig
+
+# for c
+#ENV CFLAGS="--sysroot=${SYSROOT} -I\"$SYSROOT/libc/usr/include\""
+#ENV CXXFLAGS="--sysroot=$SYSROOT -I\"$SYSROOT/include/c++/8.3.0\" -I\"$SYSROOT/include/c++/8.3.0/aarch64-nextui-linux-gnu\" -I\"$SYSROOT/libc/usr/include\""
+#ENV LDFLAGS="--sysroot=${SYSROOT} -L\"$SYSROOT/lib\" -L\"$SYSROOT/libc/usr/lib\""
+
+# stuff and extra libs
 COPY support .
+RUN ./build-libzip.sh
+#RUN ./build-bluez.sh
+RUN ./build-libsamplerate.sh
 
-# HACK TIME
-# Extract aarch64 libs from the tsps buildroot
-ENV SDK_TAR=sdk_tg5050_linux_v1.0.0.tgz
-ENV SDK_URL=https://github.com/LoveRetro/tg5050-toolchain/releases/download/20251208/${SDK_TAR}
 
-RUN mkdir -p /sdk
-RUN wget -q ${SDK_URL} -O /tmp/${SDK_TAR} && \
-tar -xzf /tmp/${SDK_TAR} -C /sdk --strip-components=2
-#RUN rm /tmp/${SDK_TAR}
-# manually copy the bits into place to not mess up our environment completely
-# sdl2
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/SDL2/. /usr/include/SDL2/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libSDL* /usr/lib/aarch64-linux-gnu/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/sdl2.pc /usr/lib/aarch64-linux-gnu/pkgconfig/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/SDL2*.pc /usr/lib/aarch64-linux-gnu/pkgconfig/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/bin/sdl* /usr/bin/
-# glesv2
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/GLES2 /usr/include/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libGLES* /usr/lib/aarch64-linux-gnu/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libmali* /usr/lib/aarch64-linux-gnu/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libdrm* /usr/lib/aarch64-linux-gnu/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libharfbuzz* /usr/lib/aarch64-linux-gnu/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/glesv2.pc /usr/lib/aarch64-linux-gnu/pkgconfig/
-#RUN rm -rf /sdk
-# END OF HACK TIME
+ENV UNION_PLATFORM=tg5050
+# do we still need this?
+ENV PREFIX_LOCAL=/opt/nextui
 
-#RUN ./setup-toolchain.sh
-
-# build newer libzip from source
-#RUN mkdir -p /root/builds
-#RUN ./build-libzip.sh > /root/builds/libzip.log
-
-# build autotools (for bluez)
-#RUN ./build-autotools.sh > /root/builds/autotools.log
-#RUN ./build-bluez.sh > /root/builds/bluez.log
-
-RUN cat setup-env.sh >> .bashrc
+# just to make sure
+RUN mkdir -p ${PREFIX_LOCAL}/include
+RUN mkdir -p ${PREFIX_LOCAL}/lib
 
 VOLUME /root/workspace
-WORKDIR /root/workspace
+WORKDIR /workspace
 
 CMD ["/bin/bash"]
