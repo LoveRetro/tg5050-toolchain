@@ -26,12 +26,12 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     gettext \
     vim \
-	libsdl-ttf2.0-dev \
-	libsdl2-dev \
-	libsdl2-image-dev \
-	libsdl2-ttf-dev \
+#	libsdl2-dev \
+#	libsdl2-image-dev \
+#	libsdl2-ttf-dev \
     libsamplerate0-dev \
-    #libzip-dev \
+    libzip-dev \
+    libsqlite3-dev \
 # 5.2 or newer for lzma/xz in libzip
     liblzma-dev \ 
 # zstd support for libzip
@@ -47,6 +47,32 @@ WORKDIR /root
 
 # stuff
 COPY support .
+
+# HACK TIME
+# Extract aarch64 libs from the tsps buildroot
+ENV SDK_TAR=sdk_tg5050_linux_v1.0.0.tgz
+ENV SDK_URL=https://github.com/LoveRetro/tg5050-toolchain/releases/download/20251208/${SDK_TAR}
+
+RUN mkdir -p /sdk
+RUN wget -q ${SDK_URL} -O /tmp/${SDK_TAR} && \
+tar -xzf /tmp/${SDK_TAR} -C /sdk --strip-components=2
+#RUN rm /tmp/${SDK_TAR}
+# manually copy the bits into place to not mess up our environment completely
+# sdl2
+RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/SDL2/. /usr/include/SDL2/
+RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libSDL* /usr/lib/aarch64-linux-gnu/
+RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/sdl2.pc /usr/lib/aarch64-linux-gnu/pkgconfig/
+RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/SDL2*.pc /usr/lib/aarch64-linux-gnu/pkgconfig/
+RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/bin/sdl* /usr/bin/
+# glesv2
+RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/GLES2 /usr/include/
+RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libGLES* /usr/lib/aarch64-linux-gnu/
+RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libmali* /usr/lib/aarch64-linux-gnu/
+RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libdrm* /usr/lib/aarch64-linux-gnu/
+RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libharfbuzz* /usr/lib/aarch64-linux-gnu/
+RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/glesv2.pc /usr/lib/aarch64-linux-gnu/pkgconfig/
+#RUN rm -rf /sdk
+# END OF HACK TIME
 
 #RUN ./setup-toolchain.sh
 
