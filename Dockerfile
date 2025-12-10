@@ -31,7 +31,7 @@ ENV TOOLCHAIN_DIR=/opt/aarch64-nextui-linux-gnu
 RUN mkdir -p ${TOOLCHAIN_DIR} && \
     ARCH=$(uname -m) && \
     TOOLCHAIN_REPO=https://github.com/LoveRetro/gcc-arm-10.3-aarch64-tg5050 && \
-    TOOLCHAIN_BUILD=v10.3.0-20251210-140856-7a6d07f3 && \
+    TOOLCHAIN_BUILD=v10.3.0-20251210-234416-816e71bd && \
     if [ "$ARCH" = "x86_64" ]; then \
         TOOLCHAIN_ARCHIVE=gcc-10.3.0-aarch64-nextui-linux-gnu-x86_64-host.tar.xz; \
     elif [ "$ARCH" = "aarch64" ]; then \
@@ -125,6 +125,10 @@ RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/glib-2.0.pc
 RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/pcre.h ${SYSROOT}/usr/include/
 RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libpcre* ${SYSROOT}/usr/lib/
 RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/libpcre.pc ${SYSROOT}/usr/lib/pkgconfig/
+# sqlite3
+RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/sqlite3.h ${SYSROOT}/usr/include/
+RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libsqlite3* ${SYSROOT}/usr/lib/
+RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/sqlite3.pc ${SYSROOT}/usr/lib/pkgconfig/
 
 #RUN rm -rf /sdk
 # END OF HACK TIME
@@ -161,7 +165,7 @@ ENV PKG_CONFIG_PATH=${SYSROOT}/usr/lib/pkgconfig:${SYSROOT}/usr/share/pkgconfig
 
 # stuff and extra libs
 COPY support .
-#RUN ./build-libzip.sh
+RUN ./build-libzip.sh
 #RUN ./build-bluez.sh
 RUN ./build-libsamplerate.sh
 
