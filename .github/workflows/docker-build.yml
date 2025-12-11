@@ -21,6 +21,15 @@ jobs:
       IMAGE_OWNER: ${{ github.repository_owner }}
 
     steps:
+      # Runner is running out of space, try to free some up
+      - name: free disk space
+        run: |
+          sudo swapoff -a
+          sudo rm -f /swapfile
+          sudo apt clean
+          docker rmi $(docker image ls -aq)
+          df -h
+
       - name: Checkout code
         uses: actions/checkout@v4
 
