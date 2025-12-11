@@ -40,8 +40,8 @@ RUN mkdir -p ${TOOLCHAIN_DIR} && \
         echo "Unsupported architecture: $ARCH" && exit 1; \
     fi && \
     TOOLCHAIN_URL=${TOOLCHAIN_REPO}/releases/download/${TOOLCHAIN_BUILD}/${TOOLCHAIN_ARCHIVE}; \
-    wget -q $TOOLCHAIN_URL -O /tmp/toolchain.tar.xz && \
-    tar -xf /tmp/toolchain.tar.xz -C ${TOOLCHAIN_DIR} --strip-components=2 && \
+    wget -q $TOOLCHAIN_URL -O /tmp/toolchain.tar.xz
+RUN tar -xf /tmp/toolchain.tar.xz -C ${TOOLCHAIN_DIR} --strip-components=2 && \
     rm /tmp/toolchain.tar.xz
 
 ENV CROSS_TRIPLE=aarch64-nextui-linux-gnu
