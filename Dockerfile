@@ -78,7 +78,7 @@ ENV SDK_URL=https://github.com/LoveRetro/tg5050-toolchain/releases/download/2025
 RUN mkdir -p /sdk
 RUN wget -q ${SDK_URL} -O /tmp/${SDK_TAR} && \
 tar -xzf /tmp/${SDK_TAR} -C /sdk --strip-components=2
-#RUN rm /tmp/${SDK_TAR}
+RUN rm /tmp/${SDK_TAR}
 # manually copy the bits into place to not mess up our environment completely
 # sdl2
 RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/SDL2/. ${SYSROOT}/usr/include/SDL2/
@@ -130,7 +130,7 @@ RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/sqlite3.h ${SYSRO
 RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libsqlite3* ${SYSROOT}/usr/lib/
 RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/sqlite3.pc ${SYSROOT}/usr/lib/pkgconfig/
 
-#RUN rm -rf /sdk
+RUN rm -rf /sdk
 # END OF HACK TIME
 
 ENV AS=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-as \
