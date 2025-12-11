@@ -78,11 +78,10 @@ ENV SDK_URL=https://github.com/LoveRetro/tg5050-toolchain/releases/download/2025
 RUN mkdir -p /sdk && \
 wget -q ${SDK_URL} -O /tmp/${SDK_TAR} && \
 tar -xzf /tmp/${SDK_TAR} -C /sdk --strip-components=2 && \
-rm /tmp/${SDK_TAR}
-
+rm /tmp/${SDK_TAR} && \
 # manually copy the bits into place to not mess up our environment completely
 # sdl2
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/SDL2/. ${SYSROOT}/usr/include/SDL2/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/SDL2/. ${SYSROOT}/usr/include/SDL2/ && \
 cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libSDL* ${SYSROOT}/usr/lib/ && \
 mkdir -p ${SYSROOT}/usr/lib/pkgconfig/ && \
 cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/sdl2.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
