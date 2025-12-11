@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     gettext \
     vim \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY support /root/support
 
@@ -75,62 +75,62 @@ ENV SYSROOT=${CROSS_ROOT}/${CROSS_TRIPLE}/libc
 ENV SDK_TAR=sdk_tg5050_linux_v1.0.0.tgz
 ENV SDK_URL=https://github.com/LoveRetro/tg5050-toolchain/releases/download/20251208/${SDK_TAR}
 
-RUN mkdir -p /sdk
-RUN wget -q ${SDK_URL} -O /tmp/${SDK_TAR} && \
-tar -xzf /tmp/${SDK_TAR} -C /sdk --strip-components=2
-RUN rm /tmp/${SDK_TAR}
+RUN mkdir -p /sdk && \
+wget -q ${SDK_URL} -O /tmp/${SDK_TAR} && \
+tar -xzf /tmp/${SDK_TAR} -C /sdk --strip-components=2 && \
+rm /tmp/${SDK_TAR}
+
 # manually copy the bits into place to not mess up our environment completely
 # sdl2
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/SDL2/. ${SYSROOT}/usr/include/SDL2/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libSDL* ${SYSROOT}/usr/lib/
-RUN mkdir -p ${SYSROOT}/usr/lib/pkgconfig/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/sdl2.pc ${SYSROOT}/usr/lib/pkgconfig/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/SDL2*.pc ${SYSROOT}/usr/lib/pkgconfig/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/bin/sdl* ${SYSROOT}/usr/bin/
+RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/SDL2/. ${SYSROOT}/usr/include/SDL2/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libSDL* ${SYSROOT}/usr/lib/ && \
+mkdir -p ${SYSROOT}/usr/lib/pkgconfig/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/sdl2.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/SDL2*.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/bin/sdl* ${SYSROOT}/usr/bin/ && \
 # glesv2
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/GLES2 ${SYSROOT}/usr/include/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libGLES* ${SYSROOT}/usr/lib/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libmali* ${SYSROOT}/usr/lib/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libdrm* ${SYSROOT}/usr/lib/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libharfbuzz* ${SYSROOT}/usr/lib/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/glesv2.pc ${SYSROOT}/usr/lib/pkgconfig/
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/GLES2 ${SYSROOT}/usr/include/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libGLES* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libmali* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libdrm* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libharfbuzz* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/glesv2.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
 # zlib (why is it not part of the 10.3 toolchain?)
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/zlib.h ${SYSROOT}/usr/include/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/zconf.h ${SYSROOT}/usr/include/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libz* ${SYSROOT}/usr/lib/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/zlib.pc ${SYSROOT}/usr/lib/pkgconfig/
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/zlib.h ${SYSROOT}/usr/include/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/zconf.h ${SYSROOT}/usr/include/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libz* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/zlib.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
 # freetype
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/freetype2/. ${SYSROOT}/usr/include/freetype2/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libfreetype* ${SYSROOT}/usr/lib/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/freetype2.pc ${SYSROOT}/usr/lib/pkgconfig/
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/freetype2/. ${SYSROOT}/usr/include/freetype2/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libfreetype* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/freetype2.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
 # libpng
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/png.h ${SYSROOT}/usr/include/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libpng* ${SYSROOT}/usr/lib/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/libpng.pc ${SYSROOT}/usr/lib/pkgconfig/
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/png.h ${SYSROOT}/usr/include/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libpng* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/libpng.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
 # libbz2
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/bzlib.h ${SYSROOT}/usr/include/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libbz2* ${SYSROOT}/usr/lib/
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/bzlib.h ${SYSROOT}/usr/include/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libbz2* ${SYSROOT}/usr/lib/ && \
 #RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/bzip2.pc ${SYSROOT}/usr/lib/pkgconfig/
 # harfbuzz
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/harfbuzz/. ${SYSROOT}/usr/include/harfbuzz/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libharfbuzz* ${SYSROOT}/usr/lib/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/harfbuzz.pc ${SYSROOT}/usr/lib/pkgconfig/
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/harfbuzz/. ${SYSROOT}/usr/include/harfbuzz/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libharfbuzz* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/harfbuzz.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
 # glib
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/glib-2.0/. ${SYSROOT}/usr/include/glib-2.0/
-RUN mkdir -p ${SYSROOT}/usr/lib/glib-2.0/include/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/glib-2.0/include/. ${SYSROOT}/usr/lib/glib-2.0/include/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libglib-2.0* ${SYSROOT}/usr/lib/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/glib-2.0.pc ${SYSROOT}/usr/lib/pkgconfig/
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/glib-2.0/. ${SYSROOT}/usr/include/glib-2.0/ && \
+mkdir -p ${SYSROOT}/usr/lib/glib-2.0/include/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/glib-2.0/include/. ${SYSROOT}/usr/lib/glib-2.0/include/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libglib-2.0* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/glib-2.0.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
 # libpcre
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/pcre.h ${SYSROOT}/usr/include/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libpcre* ${SYSROOT}/usr/lib/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/libpcre.pc ${SYSROOT}/usr/lib/pkgconfig/
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/pcre.h ${SYSROOT}/usr/include/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libpcre* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/libpcre.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
 # sqlite3
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/sqlite3.h ${SYSROOT}/usr/include/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libsqlite3* ${SYSROOT}/usr/lib/
-RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/sqlite3.pc ${SYSROOT}/usr/lib/pkgconfig/
-
-RUN rm -rf /sdk
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/sqlite3.h ${SYSROOT}/usr/include/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libsqlite3* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/sqlite3.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
+rm -rf /sdk
 # END OF HACK TIME
 
 ENV AS=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-as \
