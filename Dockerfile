@@ -129,6 +129,22 @@ cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/libpcre.pc ${SY
 cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/sqlite3.h ${SYSROOT}/usr/include/ && \
 cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libsqlite3* ${SYSROOT}/usr/lib/ && \
 cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/sqlite3.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
+# alsa
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/alsa/. ${SYSROOT}/usr/include/alsa/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libasound* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/alsa.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
+# tinyalsa
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/tinyalsa/. ${SYSROOT}/usr/include/tinyalsa/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libtinyalsa* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/tinyalsa.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
+# drm
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/drm/. ${SYSROOT}/usr/include/drm/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/xf86drmMode.h ${SYSROOT}/usr/include/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/xf86drm.h ${SYSROOT}/usr/include/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libdrm* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/libdrm.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
+# pixman
+# done
 rm -rf /sdk
 # END OF HACK TIME
 
