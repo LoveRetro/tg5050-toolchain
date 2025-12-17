@@ -111,6 +111,12 @@ cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/libpng.pc ${SYS
 cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/bzlib.h ${SYSROOT}/usr/include/ && \
 cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libbz2* ${SYSROOT}/usr/lib/ && \
 #RUN cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/bzip2.pc ${SYSROOT}/usr/lib/pkgconfig/
+# liblz4
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/lz4.h ${SYSROOT}/usr/include/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/lz4frame.h ${SYSROOT}/usr/include/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/lz4hc.h ${SYSROOT}/usr/include/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/liblz4* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/liblz4.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
 # harfbuzz
 cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/harfbuzz/. ${SYSROOT}/usr/include/harfbuzz/ && \
 cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libharfbuzz* ${SYSROOT}/usr/lib/ && \
