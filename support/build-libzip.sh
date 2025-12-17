@@ -29,6 +29,8 @@ wget -q https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz -O /tmp/bzip2.tar.gz
     cd /tmp && tar -xzf bzip2.tar.gz && cd bzip2-1.0.8 && \
     make -j$(nproc) && \
     make PREFIX=$SYSROOT/usr install && \
+# for some reason, libbz2 is not world-readable after install
+    chmod a+r $SYSROOT/usr/lib/libbz2.so.1.0 && \
     cd /tmp && rm -rf /tmp/bzip2*
 
 # libzip
