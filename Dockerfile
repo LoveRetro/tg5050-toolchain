@@ -149,7 +149,17 @@ cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/xf86drmMode.h ${SYSRO
 cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/xf86drm.h ${SYSROOT}/usr/include/ && \
 cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libdrm* ${SYSROOT}/usr/lib/ && \
 cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/libdrm.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
-# pixman
+# dbus
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/dbus-1.0/. ${SYSROOT}/usr/include/dbus-1.0/ && \
+mkdir -p ${SYSROOT}/usr/lib/dbus-1.0/include/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/dbus-1.0/include/. ${SYSROOT}/usr/lib/dbus-1.0/include/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libdbus-1* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/dbus-1.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
+# udev
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/libudev.h ${SYSROOT}/usr/include/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libudev* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/lib/libudev* ${SYSROOT}/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/libudev.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
 # done
 rm -rf /sdk
 # END OF HACK TIME
