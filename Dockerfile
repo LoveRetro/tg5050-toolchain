@@ -127,6 +127,39 @@ mkdir -p ${SYSROOT}/usr/lib/glib-2.0/include/ && \
 cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/glib-2.0/include/. ${SYSROOT}/usr/lib/glib-2.0/include/ && \
 cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libglib-2.0* ${SYSROOT}/usr/lib/ && \
 cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/glib-2.0.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
+# gobject-2.0
+# already copied as part of glib
+#cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/glib-2.0/gobject/. ${SYSROOT}/usr/include/glib-2.0/gobject/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libgobject-2.0* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/gobject-2.0.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
+# gmodule-2.0
+# already copied as part of glib
+#cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/glib-2.0/gmodule/. ${SYSROOT}/usr/include/glib-2.0/gmodule/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libgmodule-2.0* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/gmodule-2.0.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/gmodule-export-2.0.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/gmodule-no-export-2.0.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
+# gio-2.0
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/gio-unix-2.0/. ${SYSROOT}/usr/include/gio-unix-2.0/ && \
+# already copied as part of glib
+#cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/glib-2.0/gio/. ${SYSROOT}/usr/include/glib-2.0/gio/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libgio-2.0* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/gio-2.0.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
+# libffi (gobject dependency)
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/ffi.h ${SYSROOT}/usr/include/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libffi* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/libffi.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
+# libmount (gio dependency)
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/mntent.h ${SYSROOT}/usr/include/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libmount* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/lib/libmount* ${SYSROOT}/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/mount.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
+# blkid
+mkdir -p ${SYSROOT}/usr/lib/include/blkid && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/blkid/ ${SYSROOT}/usr/include/blkid/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libblkid* ${SYSROOT}/usr/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/lib/libblkid* ${SYSROOT}/lib/ && \
+cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig/blkid.pc ${SYSROOT}/usr/lib/pkgconfig/ && \
 # libpcre
 cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/include/pcre.h ${SYSROOT}/usr/include/ && \
 cp -r /sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libpcre* ${SYSROOT}/usr/lib/ && \
