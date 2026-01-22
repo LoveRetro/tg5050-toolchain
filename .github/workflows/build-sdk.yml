@@ -1,0 +1,57 @@
+name: Build and Publish NextUI SDK
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'support/build-sdk-nextui.sh'
+      - '.github/workflows/build-sdk.yml'
+  workflow_dispatch:
+
+jobs:
+  build-sdk:
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget
+
+      - name: Build SDK package
+        run: |
+          cd support
+          OUTPUT_DIR=/tmp/sdk_nextui OUTPUT_TAR=sdk_tg5050_nextui.tgz ./build-sdk-nextui.sh
+
+      - name: Generate release tag
+        id: tag
+        run: |
+          echo "release_tag=sdk-$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
+          echo "release_date=$(date +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.tag.outputs.release_tag }}
+          name: NextUI SDK ${{ steps.tag.outputs.release_date }}
+          body: |
+            Automated build of the NextUI SDK package for TG5050 toolchain.
+            
+            This package contains only the necessary libraries from the TG5050 buildroot SDK.
+            
+            **Generated from:** ${{ github.sha }}
+            **Build date:** ${{ steps.tag.outputs.release_date }}
+          files: |
+            support/sdk_tg5050_nextui.tgz
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
