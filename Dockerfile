@@ -51,7 +51,7 @@ ENV SYSROOT=${CROSS_ROOT}/${CROSS_TRIPLE}/libc
 # Download and extract the pre-packaged NextUI SDK
 # This contains only the necessary libraries from the TG5050 buildroot SDK
 ENV SDK_NEXTUI_TAR=sdk_tg5050_nextui.tgz
-ENV SDK_NEXTUI_URL=https://github.com/LoveRetro/tg5050-toolchain/releases/download/sdk-latest/${SDK_NEXTUI_TAR}
+ENV SDK_NEXTUI_URL=https://github.com/LoveRetro/tg5050-toolchain/releases/download/sdk-20260122-164101/${SDK_NEXTUI_TAR}
 
 RUN wget -q ${SDK_NEXTUI_URL} -O /tmp/${SDK_NEXTUI_TAR} && \
     tar -xzf /tmp/${SDK_NEXTUI_TAR} -C ${SYSROOT} && \

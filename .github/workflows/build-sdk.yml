@@ -1,12 +1,12 @@
 name: Build and Publish NextUI SDK
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'support/build-sdk-nextui.sh'
-      - '.github/workflows/build-sdk.yml'
+  #push:
+  #  branches:
+  #    - main
+  #  paths:
+  #    - 'support/build-sdk-nextui.sh'
+  #    - '.github/workflows/build-sdk.yml'
   workflow_dispatch:
 
 jobs:
