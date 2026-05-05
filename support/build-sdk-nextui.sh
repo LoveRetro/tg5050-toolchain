@@ -181,6 +181,7 @@ cp -r ${SDK_SYSROOT}/usr/lib/pkgconfig/libudev.pc ${OUTPUT_DIR}/usr/lib/pkgconfi
 echo "  - libcrypto"
 cp -r ${SDK_SYSROOT}/usr/include/openssl/. ${OUTPUT_DIR}/usr/include/openssl/
 cp -r ${SDK_SYSROOT}/usr/lib/libcrypto* ${OUTPUT_DIR}/usr/lib/
+mkdir -p ${OUTPUT_DIR}/usr/lib/engines-1.1
 cp -r ${SDK_SYSROOT}/usr/lib/engines-1.1/* ${OUTPUT_DIR}/usr/lib/engines-1.1/
 cp -r ${SDK_SYSROOT}/usr/lib/pkgconfig/libcrypto.pc ${OUTPUT_DIR}/usr/lib/pkgconfig/
 
