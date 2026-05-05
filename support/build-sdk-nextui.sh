@@ -177,6 +177,13 @@ cp -r ${SDK_SYSROOT}/usr/lib/libudev* ${OUTPUT_DIR}/usr/lib/
 cp -r ${SDK_SYSROOT}/lib/libudev* ${OUTPUT_DIR}/lib/
 cp -r ${SDK_SYSROOT}/usr/lib/pkgconfig/libudev.pc ${OUTPUT_DIR}/usr/lib/pkgconfig/
 
+# libcrypto
+echo "  - libcrypto"
+cp -r ${SDK_SYSROOT}/usr/include/openssl/. ${OUTPUT_DIR}/usr/include/openssl/
+cp -r ${SDK_SYSROOT}/usr/lib/libcrypto* ${OUTPUT_DIR}/usr/lib/
+cp -r ${SDK_SYSROOT}/usr/lib/engines-1.1/* ${OUTPUT_DIR}/usr/lib/engines-1.1/
+cp -r ${SDK_SYSROOT}/usr/lib/pkgconfig/libcrypto.pc ${OUTPUT_DIR}/usr/lib/pkgconfig/
+
 echo "Cleaning up temporary SDK download..."
 rm -rf /tmp/sdk
 
